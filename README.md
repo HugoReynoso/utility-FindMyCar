@@ -1,21 +1,40 @@
-# ParkFinder - Trova la mia macchina
+# FindMyCar - Trovo la mia auto
 
-App Flutter MVP per Android, progettata per essere portata anche su iOS.
+FindMyCar e un'app Flutter per Android pensata per memorizzare la posizione dell'auto e ritrovarla rapidamente con una mappa interna. Il progetto e gia strutturato per poter essere portato anche su iOS in futuro.
 
-## Funzioni incluse
+## Funzioni principali
 
-- Permesso posizione richiesto solo quando premi **Salva posizione**.
-- Salvataggio locale con DataStore Preferences su Android tramite `SharedPreferencesAsync`.
-- Distanza dalla posizione attuale alla macchina salvata.
-- Apertura di Google Maps verso la posizione salvata.
-- Localizzazione UI in italiano, inglese, spagnolo, cinese, francese, tedesco e arabo.
-- Gestione errori per GPS disattivato, permesso negato e nessuna posizione salvata.
+- Memorizza la posizione precisa dell'auto solo quando l'utente preme **Memorizza posizione auto**.
+- Salva localmente latitudine, longitudine, precisione GPS, data/ora, nota opzionale, foto e preferito.
+- Mostra la mappa interna con due marker: posizione dell'auto e posizione attuale dell'utente.
+- Permette di aprire Google Maps per navigazione esterna.
+- Cronologia di tutte le posizioni salvate.
+- Preferiti per parcheggi importanti o ricorrenti.
+- Condivisione della posizione tramite WhatsApp, messaggi o altre app.
+- Lingua automatica con cambio manuale in app.
+- Tema chiaro/scuro/sistema e personalizzazione colore.
 
-## Avvio
+## Demo
+
+Apri la demo visuale della Home direttamente dal repository:
+
+[Visualizza demo HTML](./demo.html)
+
+La demo mostra la direzione UI/UX della schermata principale: header, spazio pubblicita, due card principali e navigazione inferiore.
+
+## Avvio locale
 
 ```powershell
 flutter pub get
 flutter run
 ```
 
-Su Android serve un dispositivo fisico o emulatore con servizi posizione attivi.
+Per la migliore precisione GPS usa un telefono Android reale con servizi di posizione attivi.
+
+## Persistenza dati
+
+La posizione salvata resta disponibile anche se il telefono si spegne o si riavvia. I dati vengono persi solo se l'utente disinstalla l'app, cancella i dati dell'app dalle impostazioni Android o resetta il telefono.
+
+## Creato da
+
+Created by Reynoso Studios
