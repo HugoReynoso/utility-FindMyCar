@@ -6,21 +6,30 @@
   <title>FindMyCar Demo</title>
   <style>
     * { box-sizing: border-box; }
+    :root {
+      --primary: #0f766e;
+      --blue: #2563eb;
+      --ink: #10201d;
+      --muted: #64706b;
+      --panel: rgba(255, 255, 255, .88);
+    }
     body {
       margin: 0;
       min-height: 100vh;
       display: grid;
       place-items: center;
       background: linear-gradient(160deg, #dcebe7 0%, #f7faf8 45%, #dfe9e3 100%);
-      color: #10201d;
+      color: var(--ink);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
+    button { font: inherit; cursor: pointer; }
     .phone {
       position: relative;
       width: min(390px, calc(100vw - 28px));
-      min-height: 760px;
+      height: min(780px, calc(100vh - 24px));
+      min-height: 700px;
       overflow: hidden;
-      padding: 20px;
+      padding: 20px 20px 92px;
       border: 10px solid #111827;
       border-radius: 42px;
       background: linear-gradient(180deg, rgba(15, 118, 110, .22), #f7f7f4 42%, #eef3ef);
@@ -29,16 +38,19 @@
     header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
     .logo {
       width: 52px; height: 52px; display: grid; place-items: center;
-      border-radius: 16px; background: #0f766e; color: white;
+      border-radius: 16px; background: var(--primary); color: white;
       font-size: 28px; font-weight: 900;
     }
-    h1, h2, p { margin: 0; }
+    h1, h2, h3, p { margin: 0; }
     h1 { font-size: 27px; letter-spacing: 0; }
     header p { margin-top: 2px; color: #5f6f69; }
     .language {
       margin-left: auto; width: 44px; height: 44px; border: 0;
       border-radius: 999px; background: rgba(255, 255, 255, .78); font-size: 20px;
     }
+    .screen { display: none; height: 100%; animation: fade .22s ease-out; }
+    .screen.active { display: block; }
+    @keyframes fade { from { opacity: .25; transform: translateY(8px); } to { opacity: 1; transform: none; } }
     .ad {
       height: 72px; display: grid; place-items: center; margin-bottom: 18px;
       border: 1px solid rgba(16, 32, 29, .08); border-radius: 18px;
@@ -46,12 +58,14 @@
       font-size: 13px; font-weight: 800;
     }
     .action {
-      min-height: 172px; display: flex; flex-direction: column; justify-content: space-between;
-      margin-bottom: 14px; padding: 20px; border-radius: 20px; color: white;
-      box-shadow: 0 18px 34px rgba(16, 32, 29, .18);
+      width: 100%; min-height: 172px; display: flex; flex-direction: column; justify-content: space-between;
+      margin-bottom: 14px; padding: 20px; border: 0; border-radius: 20px; color: white;
+      text-align: left; box-shadow: 0 18px 34px rgba(16, 32, 29, .18);
+      transition: transform .18s ease, filter .18s ease;
     }
-    .primary { background: #0f766e; }
-    .blue { background: #2563eb; }
+    .action:active { transform: scale(.985); filter: brightness(.96); }
+    .primary { background: var(--primary); }
+    .blue { background: var(--blue); }
     .top { display: flex; justify-content: space-between; align-items: center; font-size: 32px; }
     .icon {
       width: 60px; height: 60px; display: grid; place-items: center;
@@ -59,14 +73,63 @@
     }
     .action h2 { margin-bottom: 8px; font-size: 25px; letter-spacing: 0; }
     .action p { color: rgba(255, 255, 255, .84); line-height: 1.25; }
+    .loading { display: none; align-items: center; gap: 8px; margin-top: 10px; font-weight: 800; }
+    .action.busy .loading { display: flex; }
+    .spinner {
+      width: 17px; height: 17px; border-radius: 50%; border: 2px solid rgba(255,255,255,.45);
+      border-top-color: white; animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .panel {
+      padding: 16px; margin-bottom: 12px; border-radius: 18px;
+      background: var(--panel); box-shadow: 0 10px 22px rgba(16, 32, 29, .08);
+    }
+    .panel h3 { font-size: 17px; margin-bottom: 5px; }
+    .panel p, .small { color: var(--muted); font-size: 14px; line-height: 1.35; }
+    .row { display: flex; gap: 10px; align-items: center; }
+    .row button, .wide {
+      flex: 1; min-height: 44px; border: 0; border-radius: 14px; padding: 10px 12px;
+      background: var(--primary); color: white; font-weight: 800;
+    }
+    .row .outline, .outline {
+      background: white; color: var(--ink); border: 1px solid rgba(16, 32, 29, .12);
+    }
+    .map {
+      position: relative; height: 430px; overflow: hidden; border-radius: 24px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.40) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.40) 1px, transparent 1px),
+        linear-gradient(135deg, #bde7d6, #dfeaf8 48%, #f3ead7);
+      background-size: 54px 54px, 54px 54px, auto;
+      box-shadow: inset 0 0 0 1px rgba(16, 32, 29, .08);
+    }
+    .road { position: absolute; left: -20px; right: -20px; top: 210px; height: 64px; transform: rotate(-13deg); background: rgba(78, 89, 101, .35); }
+    .route { position: absolute; left: 75px; top: 160px; width: 190px; height: 130px; border: 5px dashed rgba(37,99,235,.65); border-left: 0; border-bottom: 0; border-radius: 0 40px 0 0; }
+    .pin {
+      position: absolute; display: grid; place-items: center; width: 48px; height: 48px;
+      border-radius: 50%; color: white; font-size: 23px; font-weight: 900;
+      box-shadow: 0 12px 22px rgba(0,0,0,.22);
+    }
+    .pin span { position: absolute; top: 52px; padding: 3px 9px; border-radius: 999px; background: white; color: var(--ink); font-size: 11px; white-space: nowrap; }
+    .car { left: 224px; top: 122px; background: var(--primary); }
+    .me { left: 62px; top: 278px; background: var(--blue); }
+    .map-panel { position: absolute; left: 12px; right: 12px; bottom: 12px; }
+    .details { display: none; position: absolute; inset: auto 14px 86px; z-index: 5; }
+    .details.show { display: block; animation: fade .2s ease-out; }
+    .toast {
+      position: absolute; left: 24px; right: 24px; bottom: 94px; display: none;
+      padding: 12px 14px; border-radius: 16px; background: #10201d; color: white;
+      font-weight: 800; text-align: center; box-shadow: 0 14px 26px rgba(0,0,0,.22);
+    }
+    .toast.show { display: block; animation: fade .2s ease-out; }
     nav {
       position: absolute; left: 0; right: 0; bottom: 0;
       display: grid; grid-template-columns: repeat(5, 1fr);
-      padding: 10px 8px 16px; background: rgba(255, 255, 255, .86);
-      backdrop-filter: blur(12px); color: #64706b;
-      font-size: 11px; font-weight: 800; text-align: center;
+      padding: 10px 8px 16px; background: rgba(255, 255, 255, .88);
+      backdrop-filter: blur(12px); color: #64706b; font-size: 11px; font-weight: 800; text-align: center;
     }
-    nav span:first-child { color: #0f766e; }
+    nav button { border: 0; background: transparent; color: inherit; font-size: 11px; font-weight: 800; }
+    nav button.active { color: var(--primary); }
   </style>
 </head>
 <body>
@@ -74,20 +137,113 @@
     <header>
       <div class="logo">F</div>
       <div><h1>FindMyCar</h1><p>Trovo la mia auto</p></div>
-      <button class="language" aria-label="Lingua">◎</button>
+      <button class="language" id="language" aria-label="Lingua">◎</button>
     </header>
-    <section class="ad">Pubblicita</section>
-    <section class="action primary">
-      <div class="top"><div class="icon">⌖</div><div>›</div></div>
-      <div><h2>Memorizza posizione auto</h2><p>Salva la posizione precisa della tua auto.</p></div>
+
+    <section id="home" class="screen active">
+      <section class="ad">Pubblicita</section>
+      <button class="action primary" id="saveBtn">
+        <div class="top"><div class="icon">⌖</div><div>›</div></div>
+        <div>
+          <h2>Memorizza posizione auto</h2>
+          <p>Salva la posizione precisa della tua auto.</p>
+          <div class="loading"><span class="spinner"></span><span>Salvando posizione...</span></div>
+        </div>
+      </button>
+      <button class="action blue" id="findBtn">
+        <div class="top"><div class="icon">➤</div><div>›</div></div>
+        <div><h2>Trova la mia auto</h2><p>Apri la mappa interna con auto e posizione attuale.</p></div>
+      </button>
     </section>
-    <section class="action blue">
-      <div class="top"><div class="icon">➤</div><div>›</div></div>
-      <div><h2>Trova la mia auto</h2><p>Apri la mappa interna con auto e posizione attuale.</p></div>
+
+    <section id="history" class="screen">
+      <div class="panel"><h3>Cronologia</h3><p id="historyText">Nessuna posizione salvata nella demo.</p></div>
     </section>
+
+    <section id="favorites" class="screen">
+      <div class="panel"><h3>Preferiti</h3><p>Parcheggio Centro Commerciale<br><span class="small">Piano B, fila 12, ingresso nord</span></p></div>
+    </section>
+
+    <section id="share" class="screen">
+      <div class="panel"><h3>Condividi posizione</h3><p>Invia la posizione salvata con WhatsApp, messaggi o altre app.</p></div>
+      <button class="wide" id="shareBtn">Condividi con app</button>
+    </section>
+
+    <section id="settings" class="screen">
+      <div class="panel"><h3>Impostazioni</h3><p>Lingua automatica, tema chiaro/scuro e colore app.</p></div>
+      <div class="row"><button>Sistema</button><button class="outline">Chiaro</button><button class="outline">Scuro</button></div>
+      <div class="panel"><h3>Created by Reynoso Studios</h3><p>Demo interattiva per GitHub Pages.</p></div>
+    </section>
+
+    <section id="map" class="screen">
+      <div class="map">
+        <div class="road"></div><div class="route"></div>
+        <div class="pin car">🚗<span>Auto</span></div>
+        <div class="pin me">●<span>Io</span></div>
+        <div class="details panel" id="details">
+          <h3>Nota o foto</h3>
+          <p><strong>Piano B, fila 12</strong><br>Vicino ingresso nord. Precisione: 7 m.</p>
+        </div>
+        <div class="map-panel panel">
+          <h3>Distanza: 86 m</h3>
+          <div class="row"><button id="mapsBtn">Vai su Google Maps</button><button class="outline" id="detailsBtn">Nota o foto</button></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="toast" id="toast">Posizione memorizzata</div>
+
     <nav aria-label="Navigazione demo">
-      <span>⌂<br>Home</span><span>↺<br>Cronologia</span><span>★<br>Preferiti</span><span>↗<br>Condividi</span><span>⚙<br>Impost.</span>
+      <button class="active" data-screen="home">⌂<br>Home</button>
+      <button data-screen="history">↺<br>Cronologia</button>
+      <button data-screen="favorites">★<br>Preferiti</button>
+      <button data-screen="share">↗<br>Condividi</button>
+      <button data-screen="settings">⚙<br>Impost.</button>
     </nav>
   </main>
+
+  <script>
+    const screens = document.querySelectorAll('.screen');
+    const navButtons = document.querySelectorAll('nav button');
+    const toast = document.getElementById('toast');
+    const saveBtn = document.getElementById('saveBtn');
+    const historyText = document.getElementById('historyText');
+    const details = document.getElementById('details');
+    let saved = false;
+
+    function showScreen(id) {
+      screens.forEach(screen => screen.classList.toggle('active', screen.id === id));
+      navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.screen === id));
+      details.classList.remove('show');
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    navButtons.forEach(button => button.addEventListener('click', () => showScreen(button.dataset.screen)));
+
+    saveBtn.addEventListener('click', () => {
+      saveBtn.classList.add('busy');
+      setTimeout(() => {
+        saveBtn.classList.remove('busy');
+        saved = true;
+        historyText.innerHTML = 'Oggi, 14:32<br><span class="small">Lat 45.464211 · Long 9.191383 · Precisione 7 m</span>';
+        showToast('Posizione memorizzata con precisione 7 m');
+      }, 1300);
+    });
+
+    document.getElementById('findBtn').addEventListener('click', () => {
+      if (!saved) showToast('Demo: uso una posizione salvata di esempio');
+      showScreen('map');
+    });
+
+    document.getElementById('detailsBtn').addEventListener('click', () => details.classList.toggle('show'));
+    document.getElementById('mapsBtn').addEventListener('click', () => showToast('Nell app reale apre Google Maps'));
+    document.getElementById('shareBtn').addEventListener('click', () => showToast('Nell app reale apre WhatsApp o altre app'));
+    document.getElementById('language').addEventListener('click', () => showToast('Cambio lingua demo'));
+  </script>
 </body>
 </html>
