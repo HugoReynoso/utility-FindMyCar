@@ -18,7 +18,7 @@ FindMyCar e un'app Flutter per Android pensata per memorizzare la posizione dell
 
 Apri la demo visuale della Home direttamente dal repository:
 
-[Visualizza demo HTML](./demo.html)
+[Visualizza demo pubblicata](https://hugoreynoso.github.io/utility-FindMyCar/)
 
 La demo mostra la direzione UI/UX della schermata principale: header, spazio pubblicita, due card principali e navigazione inferiore.
 
@@ -38,3 +38,4 @@ La posizione salvata resta disponibile anche se il telefono si spegne o si riavv
 ## Creato da
 
 Created by Reynoso Studios
+
